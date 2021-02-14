@@ -36,7 +36,9 @@ public class ImageControllerTest {
         MockitoAnnotations.initMocks(this);
 
         controller = new ImageController(imageService, recipeService);
-        mockMvc = MockMvcBuilders.standaloneSetup(controller).build();
+        mockMvc = MockMvcBuilders.standaloneSetup(controller)
+                .setControllerAdvice(new ControllerExceptionHandler())
+                .build();
     }
 
     @Test
@@ -56,18 +58,18 @@ public class ImageControllerTest {
 
     }
 
-//    @Test
-//    public void handleImagePost() throws Exception {
-//        MockMultipartFile multipartFile =
-//                new MockMultipartFile("imagefile", "testing.txt", "text/plain",
-//                        "Spring Framework Guru".getBytes());
-//
-//        mockMvc.perform(multipart("/recipe/1/image").file(multipartFile))
-//                .andExpect(status().is3xxRedirection())
-//                .andExpect(header().string("Location", "/recipe/1/show"));
-//
-//        verify(imageService, times(1)).saveImageFile(anyLong(), any());
-//    }
+    @Test
+    public void handleImagePost() throws Exception {
+        MockMultipartFile multipartFile =
+                new MockMultipartFile("imagefile", "testing.txt", "text/plain",
+                        "Spring Framework Guru".getBytes());
+
+        mockMvc.perform(multipart("/recipe/1/image").file(multipartFile))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(header().string("Location", "/recipe/1/show"));
+
+        verify(imageService, times(1)).saveImageFile(anyLong(), any());
+    }
 
 
     @Test
@@ -98,5 +100,13 @@ public class ImageControllerTest {
         byte[] reponseBytes = response.getContentAsByteArray();
 
         assertEquals(s.getBytes().length, reponseBytes.length);
+    }
+
+    @Test
+    public void testGetImageNumberFormatException() throws Exception {
+
+        mockMvc.perform(get("/recipe/asdf/recipeimage"))
+                .andExpect(status().isBadRequest())
+                .andExpect(view().name("400error"));
     }
 }
