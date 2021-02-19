@@ -1,4 +1,7 @@
 version: 2.1
+  
+codecov:
+  token: 83efaea5-8cfe-44a9-b88d-c65853a82c1b
 
 orbs:
   maven: circleci/maven@0.0.12
